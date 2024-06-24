@@ -154,6 +154,206 @@
     <!-- End favorite icons -->
     <link rel="preconnect" href="https://lirp.cdn-website.com/">
 
+    <!-- render the required CSS and JS in the head section -->
+    <script>
+      window.SystemID = 'US_DIRECT_PRODUCTION';
+  
+      if (!window.dmAPI) {
+          window.dmAPI = {
+              registerExternalRuntimeComponent: function () {
+              },
+              getCurrentDeviceType: function () {
+                  return window._currentDevice;
+              }
+          };
+      }
+      if (!window.requestIdleCallback) {
+          window.requestIdleCallback = function (fn) {
+              setTimeout(fn, 0);
+          }
+      }
+  </script>
+  
+  <!-- loadCSS function header.jsp-->
+  
+  <script id="d-js-load-css">
+  /**
+   * There are a few <link> tags with CSS resource in them that are preloaded in the page
+   * in each of those there is a "onload" handler which invokes the loadCSS callback
+   * defined here.
+   * We are monitoring 3 main CSS files - the runtime, the global and the page.
+   * When each load we check to see if we can append them all in a batch. If threre
+   * is no page css (which may happen on inner pages) then we do not wait for it
+   */
+  (function () {
+    let cssLinks = {};
+    function loadCssLink(link) {
+      link.onload = null;
+      link.rel = "stylesheet";
+      link.type = "text/css";
+    }
+      function checkCss() {
+        const pageCssLink = document.querySelector("[id*='CssLink']");
+        const widgetCssLink = document.querySelector("[id*='widgetCSS']");
+  
+          if (cssLinks && cssLinks.runtime && cssLinks.global && (!pageCssLink || cssLinks.page) && (!widgetCssLink || cssLinks.widget)) {
+              const storedRuntimeCssLink = cssLinks.runtime;
+              const storedPageCssLink = cssLinks.page;
+              const storedGlobalCssLink = cssLinks.global;
+              const storedWidgetCssLink = cssLinks.widget;
+  
+              storedGlobalCssLink.disabled = true;
+              loadCssLink(storedGlobalCssLink);
+  
+              if (storedPageCssLink) {
+                  storedPageCssLink.disabled = true;
+                  loadCssLink(storedPageCssLink);
+              }
+  
+              if(storedWidgetCssLink) {
+                  storedWidgetCssLink.disabled = true;
+                  loadCssLink(storedWidgetCssLink);
+              }
+  
+              storedRuntimeCssLink.disabled = true;
+              loadCssLink(storedRuntimeCssLink);
+  
+              requestAnimationFrame(() => {
+                  setTimeout(() => {
+                      storedRuntimeCssLink.disabled = false;
+                      storedGlobalCssLink.disabled = false;
+                      if (storedPageCssLink) {
+                        storedPageCssLink.disabled = false;
+                      }
+                      if (storedWidgetCssLink) {
+                        storedWidgetCssLink.disabled = false;
+                      }
+                      // (SUP-4179) Clear the accumulated cssLinks only when we're
+                      // sure that the document has finished loading and the document 
+                      // has been parsed.
+                      if(document.readyState === 'interactive') {
+                        cssLinks = null;
+                      }
+                  }, 0);
+              });
+          }
+      }
+  
+    function loadCSS(link) {
+      try {
+        var urlParams = new URLSearchParams(window.location.search);
+        var noCSS = !!urlParams.get("nocss");
+        var cssTimeout = urlParams.get("cssTimeout") || 0;
+  
+        if (noCSS) {
+          return;
+        }
+        if (link.href && link.href.includes("d-css-runtime")) {
+          cssLinks.runtime = link;
+          checkCss();
+        } else if (link.id === "siteGlobalCss") {
+          cssLinks.global = link;
+          checkCss();
+        } 
+        
+        else if (link.id && link.id.includes("CssLink")) {
+          cssLinks.page = link;
+          checkCss();
+        } else if (link.id && link.id.includes("widgetCSS")) {
+          cssLinks.widget = link;
+          checkCss();
+        }
+        
+        else {
+          requestIdleCallback(function () {
+            window.setTimeout(function () {
+              loadCssLink(link);
+            }, parseInt(cssTimeout, 10));
+          });
+        }
+      } catch (e) {
+        throw e
+      }
+    }
+    window.loadCSS = window.loadCSS || loadCSS;
+  })();
+  </script>
+  
+  <script data-role="deferred-init" type="text/javascript">
+      /* usage: window.getDeferred(<deferred name>).resolve() or window.getDeferred(<deferred name>).promise.then(...)*/
+      function Def() {
+          this.promise = new Promise((function (a, b) {
+              this.resolve = a, this.reject = b
+          }).bind(this))
+      }
+  
+      const defs = {};
+      window.getDeferred = function (a) {
+          return null == defs[a] && (defs[a] = new Def), defs[a]
+      }
+      window.waitForDeferred = function (b, a, c) {
+          let d = window?.getDeferred?.(b);
+          d
+              ? d.promise.then(a)
+              : c && ["complete", "interactive"].includes(document.readyState)
+                  ? setTimeout(a, 1)
+                  : c
+                      ? document.addEventListener("DOMContentLoaded", a)
+                      : console.error(`Deferred  does not exist`);
+      };
+  </script>
+  <style id="forceCssIncludes">
+      /* This file is auto-generated from a `scss` file with the same name */
+  
+      .videobgwrapper{overflow:hidden;position:absolute;z-index:0;width:100%;height:100%;top:0;left:0;pointer-events:none;border-radius:inherit}.videobgframe{
+          position:absolute;width:101%;height:100%;top:50%;left:50%;transform:translateY(-50%) translateX(-50%);object-fit:fill}#dm video.videobgframe{margin:0}@media (
+              max-width:767px){.dmRoot .dmPhotoGallery.newPhotoGallery:not(.photo-gallery-done){min-height:80vh}}@media (min-width:1025px){
+                  .dmRoot .dmPhotoGallery.newPhotoGallery:not(.photo-gallery-done){min-height:45vh}}@media (min-width:768px) and (max-width:1024px){
+                      .responsiveTablet .dmPhotoGallery.newPhotoGallery:not(.photo-gallery-done){min-height:45vh}}#dm [data-show-on-page-only]{display:none!important}
+                      #dmRoot div.stickyHeaderFix div.site_content{margin-top:0!important}#dmRoot div.stickyHeaderFix div.hamburger-header-container{position:relative}
+  </style>
+  <style id="cssVariables" type="text/css">
+  </style>
+  
+  <!-- loadCSS function fonts.jsp-->
+  
+  <link type="text/css" rel="stylesheet" 
+  href="https://irp.cdn-website.com/fonts/css2?family=Pacifico:ital,wght@0,400&amp;family=Lobster:ital,wght@0,400&amp;family=Cabin:ital,wght@0,400..700;
+  1,400..700&amp;family=Montserrat:ital,wght@0,100..900;1,100..900&amp;family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;
+  1,700;1,900&amp;family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&amp;family=Open+Sans:ital,wght@0,300..800;
+  1,300..800&amp;subset=latin-ext&amp;display=swap">
+  
+  <!-- RT CSS Include d-css-runtime-desktop-one-package-structured-global-->
+  <link rel="stylesheet" type="text/css" href="https://static.cdn-website.com/mnlt/production/4520/_dm/s/rt/dist/css/d-css-runtime-desktop-one-package-structured-global.min.css">
+  
+  <!-- End of RT CSS Include -->
+  
+  <link type="text/css" rel="stylesheet" href="https://irp.cdn-website.com/WIDGET_CSS/a1ba50b7fbcaf0d290cba2b2263dc301.css" id="widgetCSS">
+  
+  <!-- Support `img` size attributes -->
+  <style>img[width][height] {height: auto;}
+  </style>
+  
+  <!-- Support showing sticky element on page only -->
+  <style>
+    body[data-page-alias="Reserva"] #dm [data-show-on-page-only="Reserva"] {
+      display: block !important;
+    }
+  </style>
+  
+  <!-- This is populated in Ajax navigation -->
+  <style id="pageAdditionalWidgetsCss" type="text/css">
+  </style>
+  
+  <!-- Site CSS -->
+  <link type="text/css" rel="stylesheet" href="https://irp.cdn-website.com/7e747822/files/7e747822_header_1.min.css?v=995" id="siteGlobalCss">
+  
+  <style id="customWidgetStyle" type="text/css">
+  </style>
+  <style id="innerPagesStyle" type="text/css">
+  </style>
+  <style id="additionalGlobalCss" type="text/css">
+  </style>
 
 
 
